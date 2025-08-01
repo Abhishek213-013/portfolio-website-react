@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import {
   Box,
   Heading,
@@ -17,16 +18,46 @@ import {
   FaGithub,
   FaFacebook,
   FaLinkedin,
-  FaXTwitter,
-} from "react-icons/fa6";
+} from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
-import React from "react";
+
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+
+const MotionBox = motion(Box);
+const MotionHeading = motion(Heading);
+const MotionVStack = motion(VStack);
+const MotionButton = motion(Button);
+const MotionHStack = motion(HStack);
+const MotionIconButton = motion(IconButton);
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.25,
+    },
+  },
+};
+
+const childVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
 
 const Contact = () => {
   const bg = useColorModeValue("gray.50", "gray.900");
+  const controls = useAnimation();
+  const [ref, inView] = useInView({ triggerOnce: false, threshold: 0.3 });
+
+  useEffect(() => {
+    if (inView) controls.start("visible");
+    else controls.start("hidden");
+  }, [controls, inView]);
 
   return (
-    <Box
+    <MotionBox
       as="section"
       id="contact"
       py={26}
@@ -34,8 +65,12 @@ const Contact = () => {
       bg={bg}
       maxW="15xl"
       mx="auto"
+      ref={ref}
+      initial="hidden"
+      animate={controls}
+      variants={containerVariants}
     >
-      <Heading
+      <MotionHeading
         mb={10}
         textAlign="center"
         fontSize={["3xl", "4xl", "5xl"]}
@@ -43,18 +78,20 @@ const Contact = () => {
         alignItems="center"
         justifyContent="center"
         gap={3}
+        variants={childVariants}
       >
         <Icon as={MdEmail} boxSize={8} />
         Contact Me
-      </Heading>
+      </MotionHeading>
 
-      <VStack
+      <MotionVStack
         as="form"
         spacing={6}
         bg={useColorModeValue("white", "gray.700")}
         p={8}
         borderRadius="md"
         boxShadow="lg"
+        variants={childVariants}
       >
         <FormControl id="name" isRequired>
           <FormLabel>Your Name</FormLabel>
@@ -71,29 +108,29 @@ const Contact = () => {
           <Textarea placeholder="Enter your message" rows={6} />
         </FormControl>
 
-        <Button colorScheme="blue" size="lg" type="submit">
+        <MotionButton colorScheme="blue" size="lg" type="submit" variants={childVariants}>
           Send Message
-        </Button>
-      </VStack>
+        </MotionButton>
+      </MotionVStack>
 
-      <HStack mt={8} spacing={4} justify="center">
+      <MotionHStack mt={8} spacing={4} justify="center" variants={childVariants}>
         <Link href="mailto:abhishekchowdhury054@gmail.com" isExternal>
-          <IconButton icon={<MdEmail />} aria-label="Email" />
+          <MotionIconButton icon={<MdEmail />} aria-label="Email" />
         </Link>
         <Link href="https://github.com/Abhishek213-013" isExternal>
-          <IconButton icon={<FaGithub />} aria-label="GitHub" />
+          <MotionIconButton icon={<FaGithub />} aria-label="GitHub" />
         </Link>
         <Link href="https://www.facebook.com/abhishek.chowdhury.7792052" isExternal>
-          <IconButton icon={<FaFacebook />} aria-label="Facebook" />
+          <MotionIconButton icon={<FaFacebook />} aria-label="Facebook" />
         </Link>
         <Link href="https://x.com/Abhishe96895508" isExternal>
-          <IconButton icon={<FaXTwitter />} aria-label="Twitter/X" />
+          <MotionIconButton icon={<FaXTwitter />} aria-label="Twitter/X" />
         </Link>
         <Link href="https://www.linkedin.com/in/abhishek-chowdhury-93927b278/" isExternal>
-          <IconButton icon={<FaLinkedin />} aria-label="LinkedIn" />
+          <MotionIconButton icon={<FaLinkedin />} aria-label="LinkedIn" />
         </Link>
-      </HStack>
-    </Box>
+      </MotionHStack>
+    </MotionBox>
   );
 };
 
